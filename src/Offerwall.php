@@ -6,11 +6,12 @@ class Offerwall {
   public $urlMob;
   public $tpl = '1';
   public $lang = 'ru';
+  public $currency;
 
   public $offerwallJs;
 
   function __construct() {
-    if (isset($_GET['cache'])) {
+    if (isset($_GET['nocache'])) {
       Cache::truncate();
     }
   }
@@ -20,6 +21,7 @@ class Offerwall {
     $template = new Template();
     $template->tpl = $this->tpl;
     $template->lang = $this->lang;
+    $template->currency = $this->currency;
 
     $detect = new \Mobile_Detect();
 
@@ -58,6 +60,26 @@ class Offerwall {
   private function getOffersMob() {
     $request = new HttpRequest();
     return $request->getJson($this->urlMob, [], true);
+  }
+
+
+
+  public function printJsonOffersDesktop($variableName)
+  {
+    $content = $this->getOffersDesktop();
+    $this->printJsVaraible($variableName, $content);
+  }
+
+  public function printJsonOffersMob($variableName)
+  {
+    $content = $this->getOffersMob();
+    $this->printJsVaraible($variableName, $content);
+  }
+
+  private function printJsVaraible($variableName, $variableValue)
+  {
+    $variableValue = json_encode($variableValue);
+    print "<script> const {$variableName} =  {$variableValue}; </script>";
   }
 
 

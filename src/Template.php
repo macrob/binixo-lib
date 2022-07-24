@@ -7,8 +7,9 @@ class Template
 {
   public $tpl = '1';
   public $lang = 'ru';
+  public $currency;
 
-  public function getI18n($lang)
+  private function getI18n($lang)
   {
     $langFilename = $lang .'.json';
 
@@ -17,6 +18,13 @@ class Template
     );
 
     return json_decode($cdnFile->get(), true);   
+  }
+
+  private function getCurrency() {
+    $cdnFile = new Cdn('cur.json');
+
+    $currencies = json_decode($cdnFile->get(), true); 
+    return isset($currencies[$this->currency]) ? $currencies[$this->currency] : null;
   }
 
   private function getTemplate()
@@ -141,7 +149,8 @@ class Template
       'offers' => $offers,
       'i18n' => $this->getI18n(
         $this->lang
-      )
+      ),
+      'currency' => $this->getCurrency()
     ));
   }
 
@@ -155,7 +164,8 @@ class Template
       'offers' => $offers,
       'i18n' => $this->getI18n(
         $this->lang
-      )
+      ),
+      'currency' => $this->getCurrency()
     ));
   }
 
