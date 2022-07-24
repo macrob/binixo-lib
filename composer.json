@@ -1,0 +1,20 @@
+{
+    "name": "macrob/binixo-lib",
+    "description": "php integration for offerwall render",
+    "type": "library",
+    "require": {
+        "zordius/lightncandy": "^1.2",
+        "mobiledetect/mobiledetectlib": "^2.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Macrob\\BinixoLib\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Macrob",
+            "email": "se@xambo.io"
+        }
+    ]
+}
