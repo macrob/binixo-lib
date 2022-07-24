@@ -1,6 +1,6 @@
 {
     "name": "macrob/binixo-lib",
-    "description": "php integration for offerwall render",
+    "description": "php integration for binixo offerwall render",
     "type": "library",
     "require": {
         "zordius/lightncandy": "^1.2",
@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Macrob\\BinixoLib\\": "src/"
+            "BinixoLib\\": "src/"
         }
     },
     "authors": [
