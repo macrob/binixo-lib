@@ -26,8 +26,9 @@ class Offerwall {
     $detect = new \Mobile_Detect();
 
     $isMob = $detect->isMobile();
-
-    $cacheName = $isMob ? 'offerwall-mob.php' : 'offerwall-desktop.php';
+    
+    $md5 = md5 ($_SERVER['REQUEST_URI']);
+    $cacheName = $isMob ? $md5.'_offerwall-mob.php' : $md5.'_offerwall-desktop.php';
 
     $cache = new Cache($cacheName);
 
