@@ -1,14 +1,49 @@
 <?php
+
+https://infinsa.g2afse.com/click?pid=2&offer_id=1343&
+// sub1=[source]&sub2=[ga]&sub3=[clga]&sub4=[shortid]&sub5=[loc]&sub6=[webid]
+
 namespace BinixoLib;
 
 // https://binixo.vn/?utm_source=affise&utm_medium=11&utm_campaign=62ea2cfaec918200015a7671&utm_content=060522
 class Tracking {
+  public $loc;
+  public $ga;
+
   public $utmSource;
   public $utmMedium;
   public $utmCampaign;
   public $utmContent;
+  public $shortid;
 
-  function __construct() {
+
+
+  public $source;
+  public $clga;
+  
+
+  function __construct($loc, $ga) {
+    $this->loc = $loc;
+    $this->ga = $ga;
+  }
+
+
+
+
+  public function replace($content) {
+    $params = array(
+      '[shortid]' => $this->shortid,
+
+      '[source]' => $this->utmSource,
+      '[medium]' => $this->utmMedium,
+      '[campaign]' => $this->utmCampaign,
+      '[content]' => $this->utmContent,
+
+      '[loc]' => $this->loc,
+      '[webid]' => $this->utmContent,
+    );
+
+    return str_replace(array_keys($params), array_values($params), $content);
   }
 
   public function detectParams() {
@@ -16,6 +51,7 @@ class Tracking {
     $this->utmMedium = isset($_REQUEST['utm_medium']) ? $_REQUEST['utm_medium'] : null;
     $this->utmCampaign = isset($_REQUEST['utm_campaign']) ? $_REQUEST['utm_campaign'] : null;
     $this->utmContent = isset($_REQUEST['utm_content']) ? $_REQUEST['utm_content'] : null;
+    $this->shortid = isset($_REQUEST['shortid']) ? $_REQUEST['shortid'] : null;
 
     if ($this->utmSource === null && isset($_COOKIE['utm_source'])) {
       $this->utmSource = $_COOKIE['utm_source'];
@@ -32,6 +68,11 @@ class Tracking {
     if ($this->utmContent === null && isset($_COOKIE['utm_content'])) {
       $this->utmContent = $_COOKIE['utm_content'];
     }
+
+    if ($this->shortid === null && isset($_COOKIE['shortid'])) {
+      $this->shortid = $_COOKIE['shortid'];
+    }
+
     $this->save();
   }
 
