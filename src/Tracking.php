@@ -9,9 +9,6 @@ class Tracking {
   public $utmContent;
 
   function __construct() {
-    print '<pre>';
-    var_dump($_REQUEST);
-    print '</pre>';
   }
 
   public function detectParams() {
@@ -20,6 +17,21 @@ class Tracking {
     $this->utmCampaign = isset($_REQUEST['utm_campaign']) ? $_REQUEST['utm_campaign'] : null;
     $this->utmContent = isset($_REQUEST['utm_content']) ? $_REQUEST['utm_content'] : null;
 
+    if ($this->utmSource === null && isset($_COOKIE['utm_source'])) {
+      $this->utmSource = $_COOKIE['utm_source'];
+    }
+
+    if ($this->utmMedium === null && isset($_COOKIE['utm_medium'])) {
+      $this->utmMedium = $_COOKIE['utm_medium'];
+    }
+
+    if ($this->utmCampaign === null && isset($_COOKIE['utm_campaign'])) {
+      $this->utmCampaign = $_COOKIE['utm_campaign'];
+    }
+
+    if ($this->utmContent === null && isset($_COOKIE['utm_content'])) {
+      $this->utmContent = $_COOKIE['utm_content'];
+    }
     $this->save();
   }
 
@@ -28,9 +40,6 @@ class Tracking {
     setcookie('utm_medium', $this->utmMedium, time()+3600*24*365, '/');
     setcookie('utm_campaign', $this->utmCampaign, time()+3600*24*365, '/');
     setcookie('utm_content', $this->utmContent, time()+3600*24*365, '/');
-    
-
-    var_dump($this);
   }
 
 }
