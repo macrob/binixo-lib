@@ -18,7 +18,6 @@ class Tracking {
 
   public $gclid;
 
-  public $source;
   public $clga;
   
 
@@ -38,9 +37,13 @@ class Tracking {
       '[medium]' => $this->utmMedium,
       '[campaign]' => $this->utmCampaign,
       '[content]' => $this->utmContent,
+      '[webid]' => $this->utmContent,
 
       '[loc]' => $this->loc,
-      '[webid]' => $this->utmContent,
+      '[ga]' => $this->ga,
+
+      '[gclid]' => $this->gclid,
+
     );
 
     return str_replace(array_keys($params), array_values($params), $content);
@@ -82,6 +85,7 @@ class Tracking {
   }
 
   public function save() {
+
     setcookie('utm_source', $this->utmSource, time()+3600*24*365, '/');
     setcookie('utm_medium', $this->utmMedium, time()+3600*24*365, '/');
     setcookie('utm_campaign', $this->utmCampaign, time()+3600*24*365, '/');
