@@ -16,7 +16,7 @@ class Tracking {
   public $utmContent;
   public $shortid;
 
-
+  public $gclid;
 
   public $source;
   public $clga;
@@ -52,6 +52,7 @@ class Tracking {
     $this->utmCampaign = isset($_REQUEST['utm_campaign']) ? $_REQUEST['utm_campaign'] : null;
     $this->utmContent = isset($_REQUEST['utm_content']) ? $_REQUEST['utm_content'] : null;
     $this->shortid = isset($_REQUEST['shortid']) ? $_REQUEST['shortid'] : null;
+    $this->gclid = isset($_REQUEST['gclid']) ? $_REQUEST['gclid'] : null;
 
     if ($this->utmSource === null && isset($_COOKIE['utm_source'])) {
       $this->utmSource = $_COOKIE['utm_source'];
@@ -71,6 +72,10 @@ class Tracking {
 
     if ($this->shortid === null && isset($_COOKIE['shortid'])) {
       $this->shortid = $_COOKIE['shortid'];
+    }
+
+    if ($this->gclid === null && isset($_COOKIE['gclid'])) {
+      $this->gclid = $_COOKIE['gclid'];
     }
 
     $this->save();
