@@ -18,6 +18,11 @@ class Offerwall {
 
   public function render()
   {
+    print $this->fetch();
+  }
+
+  public function fetch()
+  {
     $template = new Template();
     $template->tpl = $this->tpl;
     $template->lang = $this->lang;
@@ -38,7 +43,7 @@ class Offerwall {
       $cache->save($content);
     }
 
-    $cache->print();
+    return $cache->get();
   }
 
   public function injectJs($isInline = false)
