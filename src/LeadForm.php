@@ -52,7 +52,7 @@ class LeadForm {
   public function fetchCss() {
     return '<link rel="stylesheet" href="https://cdn.binixocrm.com/leadform/tpls/1/css/main.css">';
   }
-  
+
   public function fetch()
   {
     $template = new Template();
@@ -83,7 +83,7 @@ class LeadForm {
     return $cache->get();
     */
 
-    print '<div id="'.$this->selector.'">';
+    print '<div id="'.str_replace('#', '', $this->selector).'">';
     print $template->fetch($isMob);
     print '</div>';
     $this->renderJS();
