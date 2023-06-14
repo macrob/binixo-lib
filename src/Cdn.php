@@ -17,7 +17,7 @@ class Cdn {
 
   private $filename;
 
-  function __construct($filename, $type) {
+  function __construct($filename, $type='offerwall') {
     $this->filename = $filename;
     $this->type = $type;
   }
