@@ -6,42 +6,64 @@ use \LightnCandy\LightnCandy;
 class Template
 {
   public $tpl = '1';
+
+  /* for leadform default.hbs */
+  public $tplSub;
   public $lang = 'ru';
   public $currency;
+  // offerwall || leadform
+  public $type = 'offerwall';
 
   private function getI18n($lang)
   {
     $langFilename = $lang .'.json';
 
     $cdnFile = new Cdn(
-      join(DIRECTORY_SEPARATOR, ['lang', $langFilename])
+      join(DIRECTORY_SEPARATOR, ['lang', $langFilename]),
+      $this->type
     );
 
     return json_decode($cdnFile->get(), true);   
   }
 
   private function getCurrency() {
-    $cdnFile = new Cdn('cur.json');
+    $cdnFile = new Cdn('cur.json', $this->type);
 
     $currencies = json_decode($cdnFile->get(), true); 
     return isset($currencies[$this->currency]) ? $currencies[$this->currency] : null;
   }
 
-  private function getTemplate()
+  private function getOfferwallTemplate()
   {
     $template = $this->tpl;
 
     $tplDesktop = new Cdn(
-      join('/', ['tpls', $template, 'tpl.v3.hbs'])
+      join('/', ['tpls', $template, 'tpl.v3.hbs']),
+      $this->type
     );
 
     $tplMob = new Cdn(
-      join('/', ['tpls', $template, 'tpl.v3mob.hbs'])
+      join('/', ['tpls', $template, 'tpl.v3mob.hbs']),
+      $this->type
     );
 
     $std = new \stdClass();
     $std->desktop = $tplDesktop->get();
     $std->mob = $tplMob->get();
+
+    return $std;
+  }
+
+  private function getLeadformTemplate()
+  {
+
+    $tpl = new Cdn(
+      join('/', ['tpls', $this->tpl, $this->tplSub]),
+      $this->type
+    );
+
+    $std = new \stdClass();
+    $std->tpl = $tpl->get();
 
     return $std;
   }
@@ -115,7 +137,7 @@ class Template
     $flags = LightnCandy::FLAG_BESTPERFORMANCE | LightnCandy::FLAG_HANDLEBARSJS;
     // LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_LOG,
     
-    $tpl = $this->getTemplate();
+    $tpl = $this->getOfferwallTemplate();
     $partials = $this->getPartials();
     $helpers = $this->getHelpers();
 
@@ -139,7 +161,29 @@ class Template
     $cacheDesktop->save('<?php ' . $tplDesktop . '?>');
   }
 
-  public function fetchDesktop($offers) {    
+  private function getLeadformCachename() {
+    return 'render-leadform-'.$this->tpl.'-'.$this->tplSub.'.php';
+  }
+
+  private function compileLeadform() {
+    $flags = LightnCandy::FLAG_BESTPERFORMANCE | LightnCandy::FLAG_HANDLEBARSJS;
+    // LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_LOG,
+    
+    $tpl = $this->getLeadformTemplate();
+    $helpers = $this->getHelpers();
+
+    
+    $tplDefault = LightnCandy::compile($tpl->tpl, array(
+      'flags' => $flags,
+      'helpers' => $helpers,
+    ));
+
+    $cache = new Cache($this->getLeadformCachename());
+    $cache->save('<?php ' . $tplDefault . '?>');
+
+  }
+
+  private function fetchOfferwallDesktop($offers) {    
     $this->compile();
     
     $cache = new Cache('render-desktop.php');
@@ -154,7 +198,7 @@ class Template
     ));
   }
 
-  public function fetchMob($offers) {
+  private function fetchOfferwallMob($offers) {
     $this->compile();
     
     $cache = new Cache('render-mob.php');
@@ -169,8 +213,37 @@ class Template
     ));
   }
 
-  public function fetch($isMob, $offers) {
-    $content = $isMob ? $this->fetchMob($offers) : $this->fetchDesktop($offers);
+  private function fetchLeadform() {
+    $this->compileLeadform();
+    
+    $cache = new Cache($this->getLeadformCachename());
+    $renderer = include($cache->getPath());
+  
+    $form = $renderer(array(
+      'i18n' => $this->getI18n(
+        $this->lang
+      )
+    ));
+
+    return $form;
+  }
+
+  private function fetchOfferwall($isMob, $offers) {
+    $content = $isMob ? $this->fetchOfferwallMob($offers) : $this->fetchOfferwallDesktop($offers);
     return $content;
+  }
+
+  public function fetch($isMob, $offers = []) {
+
+    switch($this->type) {
+      case 'offerwall':
+        return $this->fetchOfferwall($isMob, $offers);
+      break;
+      case 'leadform':
+
+        return $this->fetchLeadform();
+      break;
+    }
+    
   }
 }

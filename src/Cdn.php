@@ -1,14 +1,25 @@
 <?php 
 namespace BinixoLib;
 
+define('CDN_OFFERWALL', 'https://cdn.binixocrm.com/offerwall');
+define('CDN_LEADFORM', 'https://cdn.binixocrm.com/leadform');
 
 class Cdn {
-  const CDN = 'https://cdn.binixocrm.com/offerwall';
+  
+  /*
+  *  'https://cdn.binixocrm.com/offerwall' -  offerwall'
+  *   'https://cdn.binixocrm.com/leadform' -  leadform'
+  */
+  
+  // offerwall || leadform
+  public $type = 'offerwall';
+
 
   private $filename;
 
-  function __construct($filename) {
+  function __construct($filename, $type) {
     $this->filename = $filename;
+    $this->type = $type;
   }
 
   public function get() {
@@ -28,8 +39,18 @@ class Cdn {
     $cacheFile->save($content);
   }
 
+  private function getCdnUrl() {
+    switch($this->type) {
+      case 'offerwall':
+        return CDN_OFFERWALL;
+      break;
+      case 'leadform':
+        return CDN_LEADFORM;
+      break;
+    }
+  }
   private function getContent() {
-    return file_get_contents(self::CDN . '/' . $this->filename);
+    return file_get_contents($this->getCdnUrl() . '/' . $this->filename);
   }
 
 }
