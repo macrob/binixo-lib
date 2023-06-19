@@ -2,18 +2,26 @@
 namespace BinixoLib;
 
 class LeadForm {
+
+  public $scriptFormJs = 'https://cdn.binixocrm.com/js/v1/form-p0.0.1.js';
+  public $cssFormTemplate = 'https://cdn.binixocrm.com/leadform/tpls/1/css/main.css';
+
   public $selector;
+
+  /* api url */
   public $url;
+
+  /* succes url for redirect */
   public $successUrl;
   public $tpl;
   public $userAgreement;
-  public $redirectUrl;
-  public $addUtmCampaign;
+  // public $redirectUrl;
+  // public $addUtmCampaign;
   public $task;
-  public $options;
+  // public $options;
   public $lang;
   public $mask;
-  public $onsubmit;
+  // NOT USED public $onsubmit;
 
   public function render() {
     print $this->fetch();
@@ -22,10 +30,27 @@ class LeadForm {
       // Например: $this->selector, $this->url, $this->successUrl и другие
   }
 
+  public function getScriptFormJs() {
+    return '<script src="'.$this->scriptFormJs.'"></script>';
+  }
 
+  public function getCssFormTemplate() {
+    return '<link rel="stylesheet" href="'.$this->cssFormTemplate.'">';
+  }
+
+  public function getLeadformJsOption() {
+    return json_encode([
+      'selector' => $this->selector,
+      'url' => $this->url,
+      'lang' => $this->lang,
+      'successUrl' => $this->successUrl,
+      'task' => $this->task,
+      'mask' => $this->mask,
+    ]);
+  }
+
+  /*
   public function renderJS() {
-
-    print '<script src="https://cdn.binixocrm.com/js/v1/form-p0.0.1.js"></script>';
 
     ?>
       <script>
@@ -35,7 +60,7 @@ class LeadForm {
             selector: '<?=$this->selector?>',
             url: '<?=$this->url?>',
             lang: '<?=$this->lang?>',
-            successUrl: 'https://myurlgroup1.com?short=[shortId]',
+            successUrl: '<?=$this->successUrl?>',
             options: {
               loanDays: 5,
               loanAmount: 15000,
@@ -48,10 +73,7 @@ class LeadForm {
     <?php
 
   }
-
-  public function fetchCss() {
-    return '<link rel="stylesheet" href="https://cdn.binixocrm.com/leadform/tpls/1/css/main.css">';
-  }
+*/
 
   public function fetch()
   {
@@ -83,12 +105,15 @@ class LeadForm {
     return $cache->get();
     */
 
-    print '<div id="'.str_replace('#', '', $this->selector).'">';
-    print $template->fetch($isMob);
+    /*
+    print '<div id="'.$this->getDivId().'">';
     print '</div>';
-    $this->renderJS();
-    
+    */    
 
-    
+    print $template->fetch($isMob);
+  }
+
+  private function getDivId() {
+    return str_replace('#', '', $this->selector);
   }
 }
