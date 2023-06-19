@@ -23,7 +23,7 @@ class Cdn {
   }
 
   private function getCacheFilename() {
-    return $this->type.'_'.$this->filename;
+    return $this->filename;
   }
 
   public function get() {
