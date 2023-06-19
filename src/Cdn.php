@@ -23,7 +23,13 @@ class Cdn {
   }
 
   private function getCacheFilename() {
-    return $this->filename;
+    // if(strpos($this->filename, 'lang') !== false) {
+    //   return $this->type.'_'.$this->filename;
+    // } else {
+    //   return $this->filename;
+    // }
+
+    return $this->type.'_'.$this->filename;
   }
 
   public function get() {

@@ -90,7 +90,7 @@ class Template
     $template = $this->tpl;
 
     $cache = new Cache(
-      join(DIRECTORY_SEPARATOR, ['tpls', $template, 'partials'])
+      $this->type.'_'.join(DIRECTORY_SEPARATOR, ['tpls', $template, 'partials'])
     );
     
     if (!$cache->isExist()) {
