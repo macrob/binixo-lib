@@ -22,8 +22,12 @@ class Cdn {
     $this->type = $type;
   }
 
+  private function getCacheFilename() {
+    return $this->type.'_'.$this->filename;
+  }
+
   public function get() {
-    $cacheFile = new Cache($this->filename);
+    $cacheFile = new Cache($this->getCacheFilename());
 
     if (!$cacheFile->isExist()) {
       $content = $this->getContent();
@@ -34,7 +38,7 @@ class Cdn {
   }
 
   public function download() {
-    $cacheFile = new Cache($this->filename);
+    $cacheFile = new Cache($this->getCacheFilename());
     $content = $this->getContent();
     $cacheFile->save($content);
   }
