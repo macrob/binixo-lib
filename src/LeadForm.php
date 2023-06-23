@@ -13,6 +13,8 @@ class LeadForm {
 
   /* succes url for redirect */
   public $successUrl;
+  public $successCrezuLeadUrl;
+
   public $tpl;
   public $userAgreement;
   // public $redirectUrl;
@@ -39,14 +41,20 @@ class LeadForm {
   }
 
   public function getLeadformJsOption() {
-    return json_encode([
+
+    $params = [
       'selector' => $this->selector,
       'url' => $this->url,
       'lang' => $this->lang,
       'successUrl' => $this->successUrl,
       'task' => $this->task,
-      'mask' => $this->mask,
-    ]);
+      'mask' => $this->mask
+    ];
+
+    if ($this->successCrezuLeadUrl) {
+      $params['successCrezuLeadUrl'] = $this->successCrezuLeadUrl;
+    }
+    return json_encode($params);
   }
 
   /*
