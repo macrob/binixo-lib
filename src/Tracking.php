@@ -20,6 +20,8 @@ class Tracking {
 
   public $clga;
   
+  public $js = 'https://cdn.binixocrm.com/js/v1/tracking-0.0.3.js';
+  public $redic = 'cr3d.loan';
 
   function __construct($loc, $ga) {
     $this->loc = $loc;
@@ -27,7 +29,21 @@ class Tracking {
   }
 
 
+  public function injectJs($isInline = false)
+  {
+    if ($isInline) {
+      $request = new HttpRequest();
+      $content = $request->get($this->js);
 
+      print "<script>{$content}</script>";
+    } else {
+
+      // <script src="https://cdn.binixocrm.com/js/v1/tracking-0.0.3.js" data-ga="UA-111418536-21" data-loc="kz"
+      // data-redic="cr3d.loan"> </script>
+
+      print "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\">  </script>";
+    }
+  }
 
   public function replace($content) {
     $params = array(
