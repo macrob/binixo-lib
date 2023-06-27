@@ -28,6 +28,9 @@ class Tracking {
     $this->ga = $ga;
   }
 
+  public function getJs() {
+    return "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\">  </script>";
+  }
 
   public function injectJs($isInline = false)
   {
@@ -41,7 +44,7 @@ class Tracking {
       // <script src="https://cdn.binixocrm.com/js/v1/tracking-0.0.3.js" data-ga="UA-111418536-21" data-loc="kz"
       // data-redic="cr3d.loan"> </script>
 
-      print "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\">  </script>";
+      print $this->getJs();
     }
   }
 
