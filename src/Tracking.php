@@ -20,8 +20,14 @@ class Tracking {
 
   public $clga;
   
-  public $js = 'https://cdn.binixocrm.com/js/v1/tracking-0.0.3.js';
+  public $js = 'https://cdn.binixocrm.com/js/v1/tracking-0.0.5.js';
   public $redic = 'cr3d.loan';
+
+  /* kz 'Rv8vVDLRTcyKdXJ9VzkFtw' */
+  public $gaApiKey;
+
+  /*kz 'G-8EXH7F19PM' */
+  public $gaMeasurementId;
 
   function __construct($loc, $ga) {
     $this->loc = $loc;
@@ -29,7 +35,7 @@ class Tracking {
   }
 
   public function getJs() {
-    return "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\">  </script>";
+    return "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\" data-gaApiKey=\"{$this->gaApiKey}\"  data-gaMeasurementId=\"{$this->gaMeasurementId}\">  </script>";
   }
 
   public function injectJs($isInline = false)
