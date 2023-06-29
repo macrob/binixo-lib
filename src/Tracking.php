@@ -69,7 +69,7 @@ class Tracking {
   public function getJs() {
     $gaAttr = '';
     if ($this->gaMeasurementId && $this->gaApiKey) {
-      $gaAttr = "data-ga_api_key=\"{$this->getGAApiKey()}\"  data-ga_measurement_id=\"{$this->getGAMeasurementId()}\" data-ga_session_id=\"{$this->getGASessionId()}\" data-ga_client_id=\"{$this->getGAClientId()}\"";
+      $gaAttr = "data-ga_api_key=\"{$this->getGAApiKey()}\" data-ga_measurement_id=\"{$this->getGAMeasurementId()}\" data-ga_session_id=\"{$this->getGASessionId()}\" data-ga_client_id=\"{$this->getGAClientId()}\"";
     }
 
     return "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\" {$gaAttr}>  </script>";
