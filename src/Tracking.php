@@ -36,7 +36,7 @@ class Tracking {
 
   /* GA4 metods */
   private function getGACookieSessionKey() {
-    return '_ga_'.$this->gaMeasurementId;
+    return '_ga_'.substr($this->gaMeasurementId, 2);;
   }
 
   public function getGASessionId() {
