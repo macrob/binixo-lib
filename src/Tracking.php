@@ -34,8 +34,45 @@ class Tracking {
     $this->ga = $ga;
   }
 
+  /* GA4 metods */
+  private function getGACookieSessionKey() {
+    return '_ga_'.$this->gaMeasurementId;
+  }
+
+  public function getGASessionId() {
+    $sessionId = $_COOKIE[$this->getGACookieSessionKey()] ?? null;
+    if($sessionId === null) {
+      return;
+    }
+
+    return explode('.', $sessionId)[2];
+  }
+
+  public function getGAClientId() {
+    $sessionId = $_COOKIE['_ga'] ?? null;
+    if($sessionId === null) {
+      return;
+    }
+    
+    return explode('.', $sessionId, 3)[2];
+  }
+
+  public function getGAMeasurementId() {
+    return $this->gaMeasurementId;
+  }
+
+  public function getGAApiKey() {
+    return $this->gaApiKey;
+  }
+
+
   public function getJs() {
-    return "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\" data-gaApiKey=\"{$this->gaApiKey}\"  data-gaMeasurementId=\"{$this->gaMeasurementId}\">  </script>";
+    $gaAttr = '';
+    if ($this->gaMeasurementId && $this->gaApiKey) {
+      $gaAttr = "data-gaApiKey=\"{$this->getGAApiKey()}\"  data-gaMeasurementId=\"{$this->getGAMeasurementId()}\" data-gaSessionId=\"{$this->getGASessionId()}\" data-gaClientId=\"{$this->getGAClientId()}\"";
+    }
+
+    return "<script src=\"{$this->js}\" data-ga=\"{$this->ga}\" data-loc=\"{$this->loc}\" data-redic=\"{$this->redic}\" {$gaAttr}>  </script>";
   }
 
   public function injectJs($isInline = false)
