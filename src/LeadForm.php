@@ -27,9 +27,6 @@ class LeadForm {
 
   public function render() {
     print $this->fetch();
-      // Реализация метода render
-      // В этом методе можно использовать свойства класса для выполнения требуемой логики
-      // Например: $this->selector, $this->url, $this->successUrl и другие
   }
 
   public function getScriptFormJs() {
@@ -57,31 +54,6 @@ class LeadForm {
     return json_encode($params);
   }
 
-  /*
-  public function renderJS() {
-
-    ?>
-      <script>
-        window.addEventListener("load", async () => {
-
-          leadform.render({
-            selector: '<?=$this->selector?>',
-            url: '<?=$this->url?>',
-            lang: '<?=$this->lang?>',
-            successUrl: '<?=$this->successUrl?>',
-            options: {
-              loanDays: 5,
-              loanAmount: 15000,
-            },
-            task: ['zerobounce']
-          });
-
-        });
-      </script>
-    <?php
-
-  }
-*/
 
   public function fetch()
   {
@@ -93,35 +65,9 @@ class LeadForm {
 
     $template->lang = $this->lang;
 
-
     $detect = new \Mobile_Detect();
-
     $isMob = $detect->isMobile();
-    
-
-    /*
-    $md5 = md5 ($_SERVER['REQUEST_URI']);
-    $cacheName = $isMob ? $md5.'_leadform-mob.php' : $md5.'_leadform-desktop.php';
-    $cache = new Cache($cacheName);
-
-    if (!$cache->isExist()) {
-      $offers = $isMob ? $this->getOffersMob() : $this->getOffersDesktop();
-      $content = $template->fetch($isMob, $offers);
-      $cache->save($content);
-    }
-
-    return $cache->get();
-    */
-
-    /*
-    print '<div id="'.$this->getDivId().'">';
-    print '</div>';
-    */    
 
     print $template->fetch($isMob);
-  }
-
-  private function getDivId() {
-    return str_replace('#', '', $this->selector);
   }
 }
