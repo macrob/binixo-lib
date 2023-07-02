@@ -9,20 +9,23 @@ class Mail
 {
     private $mail;
     
-    public function __construct($host, $username, $password, $port = 587, $isDebug = SMTP::DEBUG_OFF)
-    {
+    public function __construct($host, $username, $password, $port = 587, $smtpSecure = PHPMailer::ENCRYPTION_STARTTLS) {
         $this->mail = new PHPMailer(true);
 
-        $this->mail->SMTPDebug = $isDebug; // Enable verbose debug output
+        $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
         $this->mail->isSMTP(); // Send using SMTP
         $this->mail->Host       = $host; // Set the SMTP server to send through
         $this->mail->SMTPAuth   = true; // Enable SMTP authentication
         $this->mail->Username   = $username; // SMTP username
         $this->mail->Password   = $password; // SMTP password
-        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
+        $this->mail->SMTPSecure = $smtpSecure; // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
         $this->mail->Port       = $port; // TCP port to connect to
     }
     
+    public function setDebug($debug = SMTP::DEBUG_OFF) {
+        $this->mail->SMTPDebug = $debug;
+    }
+
     public function send($from, $to, $subject, $body, $isHTML = true)
     {
         try {
