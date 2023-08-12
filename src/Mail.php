@@ -35,7 +35,9 @@ class Mail
         $this->mail->SMTPSecure = $smtpSecure; // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
         $this->mail->Port       = $port; // TCP port to connect to
 
-        $this->hash = $_SESSION['mail_contact_us'];
+        if(isset($_SESSION['mail_contact_us'])) {
+            $this->hash = $_SESSION['mail_contact_us'];
+        }
     }
 
     public function setDebug($debug = SMTP::DEBUG_OFF)
@@ -67,7 +69,9 @@ class Mail
             // echo 'Message has been sent';
             $this->isSendSuccess = true;
 
-            $_SESSION['mail_contact_us'] = $hash;
+            if(isset($_SESSION)) {
+                $_SESSION['mail_contact_us'] = $hash;
+            }
             return true;
         } catch (Exception $e) {
             $this->isSendSuccess = false;
