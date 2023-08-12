@@ -31,11 +31,12 @@ class Mail
         $this->mail->SMTPDebug = $debug;
     }
 
-    public function send($from, $to, $subject, $body, $isHTML = true)
+    public function send($from, $to, $replyTo, $subject, $body, $isHTML = true)
     {
         $this->isSend = true;
 
         try {
+            $this->mail->addReplyTo($replyTo);
             $this->mail->setFrom($from);
             $this->mail->addAddress($to); // Add a recipient
             $this->mail->isHTML($isHTML); // Set email format to HTML
