@@ -1,4 +1,5 @@
 <?php
+
 namespace BinixoLib;
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -8,8 +9,11 @@ use PHPMailer\PHPMailer\SMTP;
 class Mail
 {
     private $mail;
-    
-    public function __construct($host, $username, $password, $port = 587, $smtpSecure = PHPMailer::ENCRYPTION_STARTTLS) {
+    private $isSend = false;
+    private $isSendSuccess = false;
+
+    public function __construct($host, $username, $password, $port = 587, $smtpSecure = PHPMailer::ENCRYPTION_STARTTLS)
+    {
         $this->mail = new PHPMailer(true);
 
         $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
@@ -21,13 +25,16 @@ class Mail
         $this->mail->SMTPSecure = $smtpSecure; // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
         $this->mail->Port       = $port; // TCP port to connect to
     }
-    
-    public function setDebug($debug = SMTP::DEBUG_OFF) {
+
+    public function setDebug($debug = SMTP::DEBUG_OFF)
+    {
         $this->mail->SMTPDebug = $debug;
     }
 
     public function send($from, $to, $subject, $body, $isHTML = true)
     {
+        $this->isSend = true;
+
         try {
             $this->mail->setFrom($from);
             $this->mail->addAddress($to); // Add a recipient
@@ -37,10 +44,21 @@ class Mail
 
             $this->mail->send();
             // echo 'Message has been sent';
+            $this->isSendSuccess = true;
+
             return true;
         } catch (Exception $e) {
+            $this->isSendSuccess = false;
             // echo "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}";
             return false;
         }
+    }
+
+    public function isSend() {
+        return $this->isSend;
+    }
+
+    public function isSendSucceeded() {
+        return $this->isSendSuccess;
     }
 }
