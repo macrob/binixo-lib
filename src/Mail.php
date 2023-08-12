@@ -12,6 +12,16 @@ class Mail
     private $isSend = false;
     private $isSendSuccess = false;
 
+    private $hash;
+
+    private function isAlreadySend($hash) {
+        if ($this->hash === $hash) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function __construct($host, $username, $password, $port = 587, $smtpSecure = PHPMailer::ENCRYPTION_STARTTLS)
     {
         $this->mail = new PHPMailer(true);
@@ -24,6 +34,8 @@ class Mail
         $this->mail->Password   = $password; // SMTP password
         $this->mail->SMTPSecure = $smtpSecure; // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
         $this->mail->Port       = $port; // TCP port to connect to
+
+        $this->hash = $_SESSION['mail_contact_us'];
     }
 
     public function setDebug($debug = SMTP::DEBUG_OFF)
@@ -33,6 +45,14 @@ class Mail
 
     public function send($from, $to, $replyTo, $subject, $body, $isHTML = true)
     {
+        $hash = md5(implode(".", [$from, $to, $replyTo, $subject, $body]));
+        
+        if ($this->isAlreadySend($hash)) {
+            $this->isSend = true;   
+            $this->isSendSuccess = true;
+            return true;
+        }
+
         $this->isSend = true;
 
         try {
@@ -47,6 +67,7 @@ class Mail
             // echo 'Message has been sent';
             $this->isSendSuccess = true;
 
+            $_SESSION['mail_contact_us'] = $hash;
             return true;
         } catch (Exception $e) {
             $this->isSendSuccess = false;
