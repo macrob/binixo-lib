@@ -22,6 +22,22 @@ class Mail
         return false;
     }
 
+    private function getHash($from, $to, $replyTo, $subject, $body) {
+        return md5(implode(".", [$from, $to, $replyTo, $subject, $body]));
+    }
+
+    private function getSessionHash() {
+        if(isset($_SESSION['mail_contact_us'])) {
+            $this->hash = $_SESSION['mail_contact_us'];
+        }   
+    }
+
+    private function setSessionHash($hash) {
+        if(isset($_SESSION)) {
+            $_SESSION['mail_contact_us'] = $hash;
+        }
+    }
+
     public function __construct($host, $username, $password, $port = 587, $smtpSecure = PHPMailer::ENCRYPTION_STARTTLS)
     {
         $this->mail = new PHPMailer(true);
@@ -41,13 +57,11 @@ class Mail
         $this->mail->SMTPDebug = $debug;
     }
 
+
     public function send($from, $to, $replyTo, $subject, $body, $isHTML = true)
     {
-        if(isset($_SESSION['mail_contact_us'])) {
-            $this->hash = $_SESSION['mail_contact_us'];
-        }
-
-        $hash = md5(implode(".", [$from, $to, $replyTo, $subject, $body]));
+        $this->getSessionHash();
+        $hash = $this->getHash($from, $to, $replyTo, $subject, $body);
         
         if ($this->isAlreadySend($hash)) {
             $this->isSend = true;   
@@ -69,9 +83,7 @@ class Mail
             // echo 'Message has been sent';
             $this->isSendSuccess = true;
 
-            if(isset($_SESSION)) {
-                $_SESSION['mail_contact_us'] = $hash;
-            }
+            $this->setSessionHash($hash);
             return true;
         } catch (Exception $e) {
             $this->isSendSuccess = false;
