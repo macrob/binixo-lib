@@ -56,7 +56,7 @@ class Tracking2 {
     return $this->gaApiKey;
   }
 
-  private function getJs() {
+  public function getJs() {
     $gaAttr = '';
     if ($this->gaMeasurementId && $this->gaApiKey) {
       $gaAttr = "data-ga_api_key=\"{$this->getGAApiKey()}\" data-ga_measurement_id=\"{$this->getGAMeasurementId()}\" data-ga_session_id=\"{$this->getGASessionId()}\" data-ga_client_id=\"{$this->getGAClientId()}\"";
