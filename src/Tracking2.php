@@ -73,6 +73,14 @@ class Tracking2 {
     return "<script src=\"{$this->jsLibSrc}\" data-loc=\"{$this->loc}\" data-tracking=\"{$this->trackingDomain}\" {$gaAttr} {$utmAttrStr}>  </script>";
   }
 
+  public function setTrackingDomain($value) {
+    return $this->trackingDomain = $value;
+  }
+
+  public function setJsLibSrc($value) {
+    return $this->jsLibSrc = $value;
+  }
+
   public function setGAMeasurementId($value) {
     $this->gaMeasurementId = $value;
   }
@@ -87,21 +95,15 @@ class Tracking2 {
   }
 
   public function replace($content) {
-    $params = array(
-      '[shortid]' => $this->shortid,
+    $params = [];
 
-      '[source]' => $this->utmSource,
-      '[medium]' => $this->utmMedium,
-      '[campaign]' => $this->utmCampaign,
-      '[content]' => $this->utmContent,
-      '[webid]' => $this->utmContent,
+    foreach ($this->params as $paramName => $val) {
+      $paramName = str_replace('utm_', '', $paramName);
+      $params["[$paramName]"] = $val;
+    }
 
-      '[loc]' => $this->loc,
-      '[ga]' => $this->ga,
-
-      '[gclid]' => $this->gclid,
-
-    );
+    $params['[loc]'] = $this->loc;
+    $params['[webid]'] = $this->params['utm_content'];
 
     return str_replace(array_keys($params), array_values($params), $content);
   }
