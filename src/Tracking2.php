@@ -66,7 +66,7 @@ class Tracking2 {
     foreach ($this->params as $paramName => $val) {
       $getParamName = strtolower($paramName);
 
-      $utmAttr[] = "data_{$getParamName}=\"{$val}\"";
+      $utmAttr[] = "data-{$getParamName}=\"{$val}\"";
     }
 
     $utmAttrStr = implode(' ', $utmAttr);
