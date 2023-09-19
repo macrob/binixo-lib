@@ -29,7 +29,8 @@ class Cdn {
     //   return $this->filename;
     // }
 
-    return $this->type.'_'.$this->filename;
+    // return $this->type.'_'.$this->filename;
+    return $this->type.'_'.str_replace('/', DIRECTORY_SEPARATOR, $this->filename);
   }
 
   public function get() {

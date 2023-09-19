@@ -19,7 +19,7 @@ class Template
     $langFilename = $lang .'.json';
 
     $cdnFile = new Cdn(
-      join(DIRECTORY_SEPARATOR, ['lang', $langFilename]),
+      join('/', ['lang', $langFilename]),
       $this->type
     );
 
