@@ -39,13 +39,15 @@ class Tracking {
     return '_ga_'.substr($this->gaMeasurementId, 2);;
   }
 
-  public function getGASessionId() {
+  private function getGASessionId() {
     $sessionId = $_COOKIE[$this->getGACookieSessionKey()] ?? null;
     if($sessionId === null) {
       return;
     }
 
-    return explode('.', $sessionId)[2];
+    $sessionIdParts = explode('.', $sessionId);
+    $tPart = isset($sessionIdParts[2]) ? $sessionIdParts[2] : 0;
+    return $tPart;
   }
 
   public function getGAClientId() {

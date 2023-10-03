@@ -36,7 +36,9 @@ class Tracking2 {
       return;
     }
 
-    return explode('.', $sessionId)[2];
+    $sessionIdParts = explode('.', $sessionId);
+    $tPart = isset($sessionIdParts[2]) ? $sessionIdParts[2] : 0;
+    return $tPart;
   }
 
   private function getGAClientId() {
@@ -103,7 +105,7 @@ class Tracking2 {
     }
 
     $params['[loc]'] = $this->loc;
-    $params['[webid]'] = $this->params['utm_content'];
+    $params['[webid]'] = $this->params['utm_content']; //deprecated
 
     return str_replace(array_keys($params), array_values($params), $content);
   }
