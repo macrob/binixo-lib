@@ -72,7 +72,11 @@ class Tracking2 {
     }
 
     $utmAttrStr = implode(' ', $utmAttr);
-    return "<script src=\"{$this->jsLibSrc}\" data-loc=\"{$this->loc}\" data-tracking=\"{$this->trackingDomain}\" {$gaAttr} {$utmAttrStr}>  </script>";
+    return "<script src=\"{$this->jsLibSrc}\" data-loc=\"{$this->loc}\" data-tracking=\"{$this->getTrackingDomain()}\" {$gaAttr} {$utmAttrStr}>  </script>";
+  }
+
+  private function getTrackingDomain() {
+    return preg_replace('#^(?:https?://)?/?(.*?)/?$#', '$1', $this->trackingDomain);
   }
 
   public function setTrackingDomain($value) {
