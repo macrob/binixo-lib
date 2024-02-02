@@ -10,8 +10,11 @@ class Tracking2 {
     'utm_medium' => null,
     'utm_campaign' => null,
     'utm_content' => null,
+
     'shortId' => null,
     'gclid' => null,
+
+    'aff' => null
   ];
 
   private $jsLibSrc;
