@@ -50,10 +50,12 @@ class LeadForm {
       'successUrl' => $this->successUrl,
       'task' => $this->task,
       'mask' => $this->mask,
+      /*
       'userAgreement' => $this->userAgreement,
       'cookiePolicy' => $this->cookiePolicy,
       'terms' => $this->terms,
       'privacyPolicy' => $this->privacyPolicy,
+      */
     ];
 
     if ($this->successCrezuLeadUrl) {
@@ -72,6 +74,13 @@ class LeadForm {
     $template->tplSub = 'default.hbs';
 
     $template->lang = $this->lang;
+
+    $template->options = array(
+      'userAgreement' => $this->userAgreement,
+      'cookiePolicy' => $this->cookiePolicy,
+      'terms' => $this->terms,
+      'privacyPolicy' => $this->privacyPolicy,
+    );
 
     $detect = new \Mobile_Detect();
     $isMob = $detect->isMobile();

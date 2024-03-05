@@ -8,6 +8,8 @@ class Template
   public $tpl = '1';
 
   /* for leadform default.hbs */
+  public $options;
+
   public $tplSub;
   public $lang = 'ru';
   public $currency;
@@ -222,7 +224,8 @@ class Template
     $form = $renderer(array(
       'i18n' => $this->getI18n(
         $this->lang
-      )
+      ),
+      'options' => $this->options
     ));
 
     return $form;
