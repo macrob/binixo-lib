@@ -17,6 +17,10 @@ class LeadForm {
 
   public $tpl;
   public $userAgreement;
+  public $cookiePolicy;
+  public $terms;
+  public $privacyPolicy;
+
   // public $redirectUrl;
   // public $addUtmCampaign;
   public $task;
@@ -45,7 +49,11 @@ class LeadForm {
       'lang' => $this->lang,
       'successUrl' => $this->successUrl,
       'task' => $this->task,
-      'mask' => $this->mask
+      'mask' => $this->mask,
+      'userAgreement' => $this->userAgreement,
+      'cookiePolicy' => $this->cookiePolicy,
+      'terms' => $this->terms,
+      'privacyPolicy' => $this->privacyPolicy,
     ];
 
     if ($this->successCrezuLeadUrl) {
