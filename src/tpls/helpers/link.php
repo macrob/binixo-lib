@@ -1,6 +1,10 @@
 <?php
 
 return function ($options) {
-  return str_replace('HREF', $options['hash']['href'], $options['fn']($this));
-  // return 'test';
+  $content = $options['fn']($this);
+  foreach($options['hash'] as  $key => $value) {
+    $content = str_replace(strtoupper($key), $value, $content);
+  }
+
+  return $content;
 };
