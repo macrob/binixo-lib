@@ -27,6 +27,7 @@ class LeadForm {
   // public $options;
   public $lang;
   public $mask;
+  public $wizardLogo;
   // NOT USED public $onsubmit;
 
   public function render() {
@@ -50,6 +51,7 @@ class LeadForm {
       'successUrl' => $this->successUrl,
       'task' => $this->task,
       'mask' => $this->mask,
+      'wizardLogo' => $this->wizardLogo,
       /*
       'userAgreement' => $this->userAgreement,
       'cookiePolicy' => $this->cookiePolicy,
