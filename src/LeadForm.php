@@ -28,12 +28,17 @@ class LeadForm {
   public $lang;
   public $mask;
   public $wizardLogo;
+
+  private $jsParams = [];
   // NOT USED public $onsubmit;
 
   public function render() {
     print $this->fetch();
   }
 
+  public function setJsParamas($params) {
+    $this->jsParams = $params;
+  }
   public function getScriptFormJs() {
     return '<script src="'.$this->scriptFormJs.'"></script>';
   }
@@ -59,6 +64,8 @@ class LeadForm {
       'privacyPolicy' => $this->privacyPolicy,
       */
     ];
+
+    $params = array_merge($params, $this->jsParams);
 
     if ($this->successCrezuLeadUrl) {
       $params['successCrezuLeadUrl'] = $this->successCrezuLeadUrl;
