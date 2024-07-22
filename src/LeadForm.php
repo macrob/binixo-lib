@@ -36,8 +36,12 @@ class LeadForm {
     print $this->fetch();
   }
 
-  public function setJsParamas($params) {
+  public function setJsParams($params) {
     $this->jsParams = $params;
+  }
+
+  public function setJsParam($key, $value) {
+    $this->jsParams[$key] = $value;
   }
   public function getScriptFormJs() {
     return '<script src="'.$this->scriptFormJs.'"></script>';
