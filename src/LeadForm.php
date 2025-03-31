@@ -95,7 +95,7 @@ class LeadForm {
       'privacyPolicy' => $this->privacyPolicy,
     );
 
-    $detect = new \Mobile_Detect();
+    $detect = new \Detection\MobileDetect();
     $isMob = $detect->isMobile();
 
     print $template->fetch($isMob);
