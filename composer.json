@@ -1,11 +1,11 @@
 {
     "name": "macrob/binixo-lib",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "php integration for binixo offerwall render",
     "type": "library",
     "require": {
         "zordius/lightncandy": "^1.2",
-        "mobiledetect/mobiledetectlib": "^2.8",
+        "mobiledetect/mobiledetectlib": "^4.8.08",
         "phpmailer/phpmailer": "^6.8"
     },
     "autoload": {
