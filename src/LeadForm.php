@@ -1,5 +1,6 @@
 <?php
 namespace BinixoLib;
+use Detection\MobileDetect;
 
 class LeadForm {
 
@@ -95,7 +96,7 @@ class LeadForm {
       'privacyPolicy' => $this->privacyPolicy,
     );
 
-    $detect = new \Detection\MobileDetect();
+    $detect = new MobileDetect();
     $isMob = $detect->isMobile();
 
     print $template->fetch($isMob);

@@ -1,5 +1,6 @@
 <?php
 namespace BinixoLib;
+use Detection\MobileDetect;
 
 class Offerwall {
   public $url;
@@ -28,7 +29,7 @@ class Offerwall {
     $template->lang = $this->lang;
     $template->currency = $this->currency;
 
-    $detect = new \Mobile_Detect();
+    $detect = new MobileDetect();
 
     $isMob = $detect->isMobile();
     
