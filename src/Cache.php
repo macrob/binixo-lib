@@ -7,6 +7,7 @@ if (!defined('TMP_DIR') || !file_exists(TMP_DIR)) {
 class Cache 
 {
   private $filename;
+  private $ttl;
 
   public static function getFilename ( $filename ) {
 
@@ -31,8 +32,13 @@ class Cache
     }
   }
 
-  function __construct($filename) {
+  /**
+   * @param string $filename
+   * @param int|null $ttl время жизни кеша в секундах; null — без ограничения
+   */
+  function __construct($filename, $ttl = null) {
     $this->filename = $filename;
+    $this->ttl = $ttl;
   }
 
   public function getPath() {
@@ -40,7 +46,18 @@ class Cache
   }
 
   public function isExist() {
-    return file_exists(self::getFilename($this->filename));
+    $path = self::getFilename($this->filename);
+
+    if (!file_exists($path)) {
+      return false;
+    }
+
+    if ($this->ttl !== null && (time() - filemtime($path)) >= $this->ttl) {
+      unlink($path);
+      return false;
+    }
+
+    return true;
   }
 
   public function save($content) {

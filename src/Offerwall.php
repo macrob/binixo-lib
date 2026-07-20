@@ -8,6 +8,8 @@ class Offerwall {
   public $tpl = '1';
   public $lang = 'ru';
   public $currency;
+  /** @var int|null время жизни кеша в секундах; null — без ограничения */
+  public $cacheTtl = 60;
 
   public $offerwallJs;
 
@@ -36,7 +38,7 @@ class Offerwall {
     $md5 = md5 ($_SERVER['REQUEST_URI']);
     $cacheName = $isMob ? $md5.'_offerwall-mob.php' : $md5.'_offerwall-desktop.php';
 
-    $cache = new Cache($cacheName);
+    $cache = new Cache($cacheName, $this->cacheTtl);
 
     if (!$cache->isExist()) {
       $offers = $isMob ? $this->getOffersMob() : $this->getOffersDesktop();

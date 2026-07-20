@@ -33,6 +33,7 @@ full server render
         $biLib->tpl = '1';
         $biLib->lang = 'ru';
         $biLib->currency = 'KZT';
+        $biLib->cacheTtl = 60; // секунды; null — без ограничения
 
         $biLib->url = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a180100734dc7cf60c01';
         $biLib->urlMob = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a1a2100734dc7cf60c2d';
