@@ -77,6 +77,9 @@ class Template
 
     $partials[] = 'itemCode.hbs';
     $partials[] = 'itemMfo.hbs';
+    if ($template === '3') {
+      $partials[] = 'itemMfoFeatured.hbs';
+    }
 
     foreach($partials as $item) {
 
@@ -94,9 +97,24 @@ class Template
     $cache = new Cache(
       $this->type.'_'.join(DIRECTORY_SEPARATOR, ['tpls', $template, 'partials'])
     );
-    
-    if (!$cache->isExist()) {
-      $this->downloadPartials($template);
+
+    $required = ['itemCode.hbs', 'itemMfo.hbs'];
+    if ($template === '3') {
+      $required[] = 'itemMfoFeatured.hbs';
+    }
+
+    $needDownload = !$cache->isExist();
+    if (!$needDownload) {
+      foreach ($required as $file) {
+        if (!file_exists($cache->getPath() . DIRECTORY_SEPARATOR . $file)) {
+          $needDownload = true;
+          break;
+        }
+      }
+    }
+
+    if ($needDownload) {
+      $this->downloadPartials();
     }
 
     $rs = [];
@@ -155,6 +173,10 @@ class Template
       'helpers' => $helpers,
       'partials' => $partials
     ));
+
+    if ($tplMob === false || $tplDesktop === false) {
+      throw new \RuntimeException('Failed to compile offerwall template "' . $this->tpl . '"');
+    }
 
     $cacheMob = new Cache('render-mob.php');
     $cacheMob->save('<?php ' . $tplMob . '?>');
