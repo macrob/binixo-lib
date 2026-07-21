@@ -1,6 +1,6 @@
 # binixo-lib
 
-#### локальный пример (limit / Next)
+#### локальный пример (SSR + Next)
 ```bash
 ./example/serve.sh
 # открыть http://127.0.0.1:8080/exmpl2.php
@@ -24,12 +24,10 @@ define('TMP_DIR', realpath(APP_ROOT . '/../tmp/'));
 
 далеее есть 2 варианта использования 
 - вариант 1, полный серверный рендер
-- вариант 2, клиентский рендер с `limit` / Next
+- вариант 2, гибрид: первая страница PHP, дальше Next через JS
   
 #### Вариант 1:
-full server render (PHP печатает HTML офферов)
-
-на страницу /offers/index.html добавлям следующий код
+full server render (PHP печатает весь HTML)
 
 ```php
     <div id="offerwall">
@@ -40,11 +38,10 @@ full server render (PHP печатает HTML офферов)
         $biLib->lang = 'ru';
         $biLib->currency = 'KZT';
         $biLib->cacheTtl = 60; // секунды; null — без ограничения
-        $biLib->limit = 5; // опционально: только первые N офферов в HTML
 
         $biLib->url = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a180100734dc7cf60c01';
         $biLib->urlMob = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a1a2100734dc7cf60c2d';
-        $biLib->offerwallJs = 'https://cdn.binixocrm.com/js/v1/offerwall-v2.0.2.js';
+        $biLib->offerwallJs = 'https://cdn.binixocrm.com/js/v1/offerwall-v2.0.3.js';
         
         $biLib->injectJs(true);
         $biLib->render();
@@ -54,7 +51,7 @@ full server render (PHP печатает HTML офферов)
 
 и не забываем вставить трекинг
 ```html
-    <script>
+<script>
   window.addEventListener("load", async() => {
     tracking.doit();
   });
@@ -63,9 +60,8 @@ full server render (PHP печатает HTML офферов)
 
 #### Вариант 2:
 
-клиентский рендер с `limit` и кнопкой Next.
-PHP **не** вызывает `render()` / `printJsonOffers*` — иначе в HTML уедет весь список.
-Офферы грузит JS по `url` / `urlMob`.
+гибрид: PHP рисует первые `limit` офферов, кнопка Next догружает через JS.
+PHP **не** вызывает `printJsonOffers*` — офферы для next JS берёт по `url` / `urlMob`.
 
 ```php
       <?php 
@@ -78,23 +74,27 @@ PHP **не** вызывает `render()` / `printJsonOffers*` — иначе в 
 
         $biLib->url = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a180100734dc7cf60c01';
         $biLib->urlMob = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a1a2100734dc7cf60c2d';
-        $biLib->offerwallJs = 'https://cdn.binixocrm.com/js/v1/offerwall-v2.0.2.js';
+        $biLib->offerwallJs = 'https://cdn.binixocrm.com/js/v1/offerwall-v2.0.3.js';
         
         $biLib->injectJs(true);
-        $biLib->printClientOptions('#offerwall'); // только опции, без офферов
+        $biLib->printClientOptions('#offerwall');
       ?>
+
+      <div id="offerwall">
+        <?php $biLib->render(); // только первые limit ?>
+      </div>
+      <button id="next-btn" type="button">Next</button>
+      <span id="status"></span>
 ```
 
 
 ```html
-<div id="offerwall"></div>
-<button id="next-btn" type="button">Next</button>
-<span id="status"></span>
 <script>
   window.addEventListener("load", async() => {
     const instance = new ofr.Offerwall(offerwallOptions);
 
-    await instance.render();
+    // первая страница уже от PHP — не вызываем render()
+    await instance.resume();
 
     const statusEl = document.getElementById('status');
     const nextBtn = document.getElementById('next-btn');

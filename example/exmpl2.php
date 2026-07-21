@@ -6,7 +6,8 @@ include(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . 
 define('CRM2_ENDPOINT_V3', 'https://binixo.mx/s3');
 define('OFFERWALL_V3', '6699019ca45acda8280739a4');
 define('OFFERWALL_MOBILE_V3', '6699087ea45acda8280739a5');  // advert
-define('LIB_JS_OFFERWALL_V2', 'https://cdn.binixocrm.com/js/v1/offerwall-v2.0.2.js');
+// локальный билд для демо; на проде — CDN offerwall-v2.0.3.js
+define('LIB_JS_OFFERWALL_V2', 'js/offerwall-v2.0.3.js');
 
 
 define('APP_ROOT', realpath(__DIR__));
@@ -24,19 +25,25 @@ $biLib->url = CRM2_ENDPOINT_V3 . '/offers/' . OFFERWALL_V3;
 $biLib->urlMob = CRM2_ENDPOINT_V3 . '/offers/' . OFFERWALL_MOBILE_V3;
 $biLib->offerwallJs = LIB_JS_OFFERWALL_V2;
 
-// PHP не рендерит и не дампит офферы — только JS + опции
-$biLib->injectJs(true);
+// JS либа + опции (без дампа офферов)
+$biLib->injectJs(false);
 $biLib->printClientOptions('#offerwall');
 
 ?>
-  <div id="offerwall"></div>
+  <div id="offerwall">
+    <?php
+      // первый экран — серверный рендер (только limit офферов)
+      $biLib->render();
+    ?>
+  </div>
   <button id="next-btn" type="button">Next</button>
   <span id="status"></span>
   <script>
     window.addEventListener("load", async() => {
       const instance = new ofr.Offerwall(offerwallOptions);
 
-      await instance.render();
+      // PHP уже отрисовал первую страницу — только подгружаем список для next()
+      await instance.resume();
 
       const statusEl = document.getElementById('status');
       const nextBtn = document.getElementById('next-btn');
