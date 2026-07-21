@@ -7,7 +7,7 @@ define('CRM2_ENDPOINT_V3', 'https://binixo.mx/s3');
 define('OFFERWALL_V3', '6699019ca45acda8280739a4');
 define('OFFERWALL_MOBILE_V3', '6699087ea45acda8280739a5');  // advert
 // локальный билд для демо; на проде — CDN offerwall-v2.0.3.js
-define('LIB_JS_OFFERWALL_V2', 'js/offerwall-v2.0.3.js');
+define('LIB_JS_OFFERWALL_V2', 'js/offerwall-v2.0.6.js');
 
 
 define('APP_ROOT', realpath(__DIR__));
@@ -20,6 +20,7 @@ $biLib->tpl = '3';
 $biLib->lang = 'es';
 $biLib->currency = 'MXN';
 $biLib->limit = 5;
+$biLib->offset = 0; // с какого оффера начинать (0-based)
 
 $biLib->url = CRM2_ENDPOINT_V3 . '/offers/' . OFFERWALL_V3;
 $biLib->urlMob = CRM2_ENDPOINT_V3 . '/offers/' . OFFERWALL_MOBILE_V3;
@@ -29,10 +30,12 @@ $biLib->offerwallJs = LIB_JS_OFFERWALL_V2;
 $biLib->injectJs(false);
 $biLib->printClientOptions('#offerwall');
 
+$offerCount = $biLib->getOfferCount();
+
 ?>
   <div id="offerwall">
     <?php
-      // первый экран — серверный рендер (только limit офферов)
+      // первый экран — серверный рендер (offset + limit)
       $biLib->render();
     ?>
   </div>
@@ -45,12 +48,17 @@ $biLib->printClientOptions('#offerwall');
       // PHP уже отрисовал первую страницу — только подгружаем список для next()
       await instance.resume();
 
+      instance.onNext(({ shown, total, hasNext, batchSize }) => {
+        console.log('next batch', { shown, total, hasNext, batchSize });
+      });
+
       const statusEl = document.getElementById('status');
       const nextBtn = document.getElementById('next-btn');
 
       function syncStatus() {
         statusEl.textContent =
-          instance.getShownCount() + ' / ' + instance.getTotalCount();
+          instance.getShownCount() + ' / ' + instance.getOfferCount() +
+          ' (php: <?= (int) $offerCount ?>)';
         nextBtn.disabled = !instance.hasNext();
       }
 
