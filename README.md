@@ -2,9 +2,9 @@
 
 #### локальный пример (SSR + Next)
 ```bash
-./example/serve.sh
-# открыть http://127.0.0.1:8080/exmpl2.php
-# PORT=8090 ./example/serve.sh   # другой порт
+./example/build-js.sh   # собрать JS из binixo-libjs и положить в example/js/
+./example/serve.sh      # http://127.0.0.1:8080/exmpl2.php
+# PORT=8090 ./example/serve.sh
 ```
 
 #### подготовка: 

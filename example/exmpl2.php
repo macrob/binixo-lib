@@ -7,7 +7,7 @@ define('CRM2_ENDPOINT_V3', 'https://binixo.mx/s3');
 define('OFFERWALL_V3', '6699019ca45acda8280739a4');
 define('OFFERWALL_MOBILE_V3', '6699087ea45acda8280739a5');  // advert
 // локальный билд для демо; на проде — CDN offerwall-v2.0.3.js
-define('LIB_JS_OFFERWALL_V2', 'js/offerwall-v2.0.7.js');
+define('LIB_JS_OFFERWALL_V2', 'js/offerwall-v2.0.8.js');
 
 
 define('APP_ROOT', realpath(__DIR__));
@@ -19,8 +19,8 @@ $biLib = new \BinixoLib\Offerwall();
 $biLib->tpl = '3';
 $biLib->lang = 'es';
 $biLib->currency = 'MXN';
-$biLib->limit = 5;
-$biLib->offset = 0; // с какого оффера начинать (0-based)
+$biLib->limit = 8;
+// $biLib->offset = 0; // с какого оффера начинать (0-based)
 
 $biLib->url = CRM2_ENDPOINT_V3 . '/offers/' . OFFERWALL_V3;
 $biLib->urlMob = CRM2_ENDPOINT_V3 . '/offers/' . OFFERWALL_MOBILE_V3;
@@ -33,6 +33,10 @@ $biLib->printClientOptions('#offerwall');
 $offerCount = $biLib->getOfferCount();
 
 ?>
+<link rel="stylesheet" href="https://binixo.mx/css/offers-tpl3.css">
+
+<div class="offers">
+
   <div id="offerwall">
     <?php
       // первый экран — серверный рендер (offset + limit)
@@ -43,10 +47,14 @@ $offerCount = $biLib->getOfferCount();
   <span id="status"></span>
   <script>
     window.addEventListener("load", async() => {
+      offerwallOptions.tpl = '3.1';
       const instance = new ofr.Offerwall(offerwallOptions);
 
       // PHP уже отрисовал первую страницу — только подгружаем список для next()
-      await instance.resume();
+      await instance.resume({
+        offset: 8,
+        limit: 10,
+      });
 
       instance.onNext(({ shown, total, hasNext, batchSize }) => {
         console.log('next batch', { shown, total, hasNext, batchSize });
@@ -70,3 +78,4 @@ $offerCount = $biLib->getOfferCount();
       });
     });
   </script>
+</div>
