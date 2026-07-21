@@ -14,7 +14,7 @@ $biLib->currency = 'KZT';
 
 $biLib->url = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a180100734dc7cf60c01';
 $biLib->urlMob = 'https://kz.binixocrm.com/fd/offerwall/lender/json2?id=6193a1a2100734dc7cf60c2d';
-$biLib->offerwallJs = 'https://cdn.binixocrm.com/js/v1/offerwall-0.0.1.js';
+$biLib->offerwallJs = 'https://cdn.binixocrm.com/js/v1/offerwall-v2.0.2.js';
 
 
 try {
