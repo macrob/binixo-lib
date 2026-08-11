@@ -75,20 +75,28 @@ class Template
 
     $partials = [];
 
-    $partials[] = 'itemCode.hbs';
-    $partials[] = 'itemMfo.hbs';
-    if ($template === '3') {
-      $partials[] = 'itemMfoFeatured.hbs';
-    }
-
-    foreach($partials as $item) {
-
+    foreach ($this->getRequiredPartials($template) as $item) {
       $cdn = new Cdn(
         join('/', ['tpls', $template, 'partials', $item])
       );
 
       $cdn->download();
     }
+  }
+
+  private function getRequiredPartials($template) {
+    $partials = ['itemCode.hbs', 'itemMfo.hbs'];
+
+    if ($template === '3') {
+      $partials[] = 'itemMfoFeatured.hbs';
+    }
+
+    if ($template === '4') {
+      $partials[] = 'itemMfoMain.hbs';
+      $partials[] = 'itemMfoBig.hbs';
+    }
+
+    return $partials;
   }
 
   private function getPartials() {
@@ -98,10 +106,7 @@ class Template
       $this->type.'_'.join(DIRECTORY_SEPARATOR, ['tpls', $template, 'partials'])
     );
 
-    $required = ['itemCode.hbs', 'itemMfo.hbs'];
-    if ($template === '3') {
-      $required[] = 'itemMfoFeatured.hbs';
-    }
+    $required = $this->getRequiredPartials($template);
 
     $needDownload = !$cache->isExist();
     if (!$needDownload) {
