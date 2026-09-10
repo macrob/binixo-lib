@@ -110,13 +110,61 @@ class Offerwall {
   }
 
   private function getOffersDesktop() {
-    $request = new HttpRequest();
-    return $this->normalizeOffers($request->getJson($this->url, [], true));
+    return $this->getOffersCached($this->url, 'desktop');
   }
 
   private function getOffersMob() {
-    $request = new HttpRequest();
-    return $this->normalizeOffers($request->getJson($this->urlMob, [], true));
+    return $this->getOffersCached($this->urlMob, 'mob');
+  }
+
+  /**
+   * Фид офферов с файловым кешем и stale-фолбэком:
+   * пока кеш свежий — в API не ходим вообще; если API упал или
+   * вернул пустоту — отдаём последний удачный ответ и перекешируем
+   * его на cacheTtl, чтобы каждый запрос не ждал таймаут заново.
+   */
+  private function getOffersCached($url, $suffix) {
+    if (!$url) {
+      return [];
+    }
+
+    $key = 'offerwall-feed-'.md5($url).'-'.$suffix;
+    $fresh = new Cache($key.'.json', $this->cacheTtl);
+    $stale = new Cache($key.'.stale.json', null);
+
+    if ($fresh->isExist()) {
+      $cached = json_decode($fresh->get(), true);
+      if (is_array($cached)) {
+        return $cached;
+      }
+    }
+
+    try {
+      $request = new HttpRequest();
+      $request->connectTimeout = 3;
+      $request->timeout = 5;
+      $offers = $this->normalizeOffers($request->getJson($url, [], true));
+    } catch (\Exception $e) {
+      $offers = null;
+    }
+
+    if (is_array($offers) && count($offers) > 0) {
+      $content = json_encode($offers);
+      $fresh->save($content);
+      $stale->save($content);
+      return $offers;
+    }
+
+    if ($stale->isExist()) {
+      $content = $stale->get();
+      $fresh->save($content);
+      $cached = json_decode($content, true);
+      if (is_array($cached)) {
+        return $cached;
+      }
+    }
+
+    return is_array($offers) ? $offers : [];
   }
 
   private function normalizeOffers($data)

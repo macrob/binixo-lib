@@ -4,6 +4,10 @@ namespace BinixoLib;
 
 class HttpRequest {
   public $httpCode;
+  /** @var int таймаут соединения, сек */
+  public $connectTimeout = 5;
+  /** @var int общий таймаут запроса (включая соединение и ответ), сек */
+  public $timeout = 10;
 
   public function get($url, $params = array()) {
     return $this->request($url, $params, 'GET');
@@ -23,7 +27,8 @@ class HttpRequest {
     $options = array(
       CURLOPT_URL            => $url,
       CURLOPT_CUSTOMREQUEST  => $type,
-      CURLOPT_CONNECTTIMEOUT => 10,
+      CURLOPT_CONNECTTIMEOUT => $this->connectTimeout,
+      CURLOPT_TIMEOUT        => $this->timeout,
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_SSL_VERIFYPEER => false,
       CURLOPT_SSL_VERIFYHOST => false,

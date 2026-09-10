@@ -73,8 +73,6 @@ class Template
   private function downloadPartials() {
     $template = $this->tpl;
 
-    $partials = [];
-
     foreach ($this->getRequiredPartials($template) as $item) {
       $cdn = new Cdn(
         join('/', ['tpls', $template, 'partials', $item])
