@@ -122,6 +122,11 @@ class Offerwall {
    * пока кеш свежий — в API не ходим вообще; если API упал или
    * вернул пустоту — отдаём последний удачный ответ и перекешируем
    * его на cacheTtl, чтобы каждый запрос не ждал таймаут заново.
+   *
+   * Анти-stampede: при протухании кеша за обновлением в API идёт
+   * только один процесс (flock); остальные, не дожидаясь его,
+   * отдают stale-ответ. Ждать на локе приходится лишь при холодном
+   * старте, когда stale ещё не существует.
    */
   private function getOffersCached($url, $suffix) {
     if (!$url) {
@@ -139,32 +144,57 @@ class Offerwall {
       }
     }
 
+    $lock = fopen(Cache::getFilename($key.'.lock'), 'c');
+    if ($lock && !flock($lock, LOCK_EX | LOCK_NB)) {
+      if ($stale->isExist()) {
+        fclose($lock);
+        $cached = json_decode($stale->get(), true);
+        return is_array($cached) ? $cached : [];
+      }
+      flock($lock, LOCK_EX);
+    }
+
     try {
-      $request = new HttpRequest();
-      $request->connectTimeout = 3;
-      $request->timeout = 5;
-      $offers = $this->normalizeOffers($request->getJson($url, [], true));
-    } catch (\Exception $e) {
-      $offers = null;
-    }
+      // пока брали лок, кеш мог обновить другой процесс
+      if ($fresh->isExist()) {
+        $cached = json_decode($fresh->get(), true);
+        if (is_array($cached)) {
+          return $cached;
+        }
+      }
 
-    if (is_array($offers) && count($offers) > 0) {
-      $content = json_encode($offers);
-      $fresh->save($content);
-      $stale->save($content);
-      return $offers;
-    }
+      try {
+        $request = new HttpRequest();
+        $request->connectTimeout = 3;
+        $request->timeout = 5;
+        $offers = $this->normalizeOffers($request->getJson($url, [], true));
+      } catch (\Exception $e) {
+        $offers = null;
+      }
 
-    if ($stale->isExist()) {
-      $content = $stale->get();
-      $fresh->save($content);
-      $cached = json_decode($content, true);
-      if (is_array($cached)) {
-        return $cached;
+      if (is_array($offers) && count($offers) > 0) {
+        $content = json_encode($offers);
+        $fresh->save($content);
+        $stale->save($content);
+        return $offers;
+      }
+
+      if ($stale->isExist()) {
+        $content = $stale->get();
+        $fresh->save($content);
+        $cached = json_decode($content, true);
+        if (is_array($cached)) {
+          return $cached;
+        }
+      }
+
+      return is_array($offers) ? $offers : [];
+    } finally {
+      if ($lock) {
+        flock($lock, LOCK_UN);
+        fclose($lock);
       }
     }
-
-    return is_array($offers) ? $offers : [];
   }
 
   private function normalizeOffers($data)
