@@ -62,8 +62,6 @@ class HttpRequest {
 
     $this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-    curl_close($ch);
-
     if ($error) {
       throw new Exceptions\Http($error);
     }
