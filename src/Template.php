@@ -210,11 +210,24 @@ class Template
 
   }
 
-  private function fetchOfferwallDesktop($offers) {    
-    $this->compile();
-    
-    $cache = new Cache('render-desktop.php');
+  private function includeRenderer(Cache $cache) {
     $renderer = include($cache->getPath());
+    if (!is_callable($renderer)) {
+      // кэш мог перезаписываться параллельным процессом — одна повторная попытка
+      usleep(50000);
+      $renderer = include($cache->getPath());
+    }
+    if (!is_callable($renderer)) {
+      throw new \Exception('Template: renderer cache is not callable: ' . $cache->getPath());
+    }
+    return $renderer;
+  }
+
+  private function fetchOfferwallDesktop($offers) {
+    $this->compile();
+
+    $cache = new Cache('render-desktop.php');
+    $renderer = $this->includeRenderer($cache);
 
     return $renderer(array(
       'offers' => $offers,
@@ -229,7 +242,7 @@ class Template
     $this->compile();
     
     $cache = new Cache('render-mob.php');
-    $renderer = include($cache->getPath());
+    $renderer = $this->includeRenderer($cache);
     
     return $renderer(array(
       'offers' => $offers,
@@ -244,7 +257,7 @@ class Template
     $this->compileLeadform();
     
     $cache = new Cache($this->getLeadformCachename());
-    $renderer = include($cache->getPath());
+    $renderer = $this->includeRenderer($cache);
   
     $form = $renderer(array(
       'i18n' => $this->getI18n(

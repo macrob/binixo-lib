@@ -52,8 +52,13 @@ class Cache
       return false;
     }
 
-    if ($this->ttl !== null && (time() - filemtime($path)) >= $this->ttl) {
-      unlink($path);
+    $mtime = @filemtime($path);
+    if ($mtime === false) {
+      return false;
+    }
+
+    if ($this->ttl !== null && (time() - $mtime) >= $this->ttl) {
+      @unlink($path);
       return false;
     }
 
@@ -64,12 +69,14 @@ class Cache
     $filePth = self::getFilename($this->filename);
     $fileDirname = pathinfo($filePth, PATHINFO_DIRNAME);
 
+    if (!is_dir($fileDirname) && !@mkdir($fileDirname, 0777, true) && !is_dir($fileDirname)) {
+      throw new \Exception('Cache: cannot create dir ' . $fileDirname);
+    }
 
-    if (!file_exists($fileDirname)) {
-      mkdir($fileDirname, 0777, true);
-    };
-
-    file_put_contents($filePth, $content);
+    // атомарно: параллельный include() не должен видеть недописанный файл
+    $tmp = $filePth . '.' . uniqid('', true) . '.tmp';
+    file_put_contents($tmp, $content);
+    rename($tmp, $filePth);
   }
 
   public function print() {
